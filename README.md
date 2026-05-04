@@ -2,7 +2,7 @@
 
 > Transform raw meeting notes into structured action plans — automatically.
 
-[!\[Python](https://img.shields.io/badge/Python-3.11-blue?style=flat-square)](https://python.org)
+[\*\*Python 3.11\*\* |(https://img.shields.io/badge/Python-3.11-blue?style=flat-square)](https://python.org)
 [!\[Flask](https://img.shields.io/badge/Flask-3.0-green?style=flat-square)](https://flask.palletsprojects.com)
 [!\[Gemini](https://img.shields.io/badge/gemini-2.0-flash-orange?style=flat-square)](https://ai.google.dev)
 [!\[Firebase](https://img.shields.io/badge/Firebase-Firestore-yellow?style=flat-square)](https://firebase.google.com)
@@ -14,7 +14,7 @@
 
 **Productivity / Workplace Automation**
 
-Persona: Professionals, team leads, and project managers who spend significant time in meetings but struggle to track action items, follow through on decisions, and keep teams accountable.
+Persona: Professionals, team leads, and project managers who spend significant time in meetings but struggle to track action **items**, follow through on decisions, and keep teams accountable.
 
 \---
 
