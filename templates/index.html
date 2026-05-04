@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Meeting Assistant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:   #0f1f3d;
+      --navy2:  #162b52;
+      --blue:   #1a6bff;
+      --sky:    #38bdf8;
+      --mint:   #00e5c3;
+      --amber:  #f59e0b;
+      --red:    #ef4444;
+      --green:  #10b981;
+      --bg:     #f0f4ff;
+      --surface:#ffffff;
+      --border: #dde6f5;
+      --text:   #0f1f3d;
+      --muted:  #64748b;
+      --white:  #ffffff;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--navy);
+      padding: 0 40px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--blue), var(--mint));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .logo-text {
+      font-family: 'Instrument Serif', serif;
+      font-size: 20px;
+      color: white;
+      letter-spacing: -0.02em;
+    }
+    .logo-text span { color: var(--mint); }
+
+    .header-right { display: flex; align-items: center; gap: 12px; }
+
+    .btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 18px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.18s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-ghost {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.2); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue), #0050d0);
+      color: white;
+      box-shadow: 0 3px 12px rgba(26,107,255,0.35);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 5px 18px rgba(26,107,255,0.45); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--blue);
+      border: 1.5px solid var(--blue);
+    }
+    .btn-outline:hover { background: rgba(26,107,255,0.06); }
+
+    .user-badge {
+      background: rgba(0,229,195,0.15);
+      border: 1px solid rgba(0,229,195,0.35);
+      color: var(--mint);
+      font-size: 12px;
+      font-family: 'Space Mono', monospace;
+      padding: 5px 12px;
+      border-radius: 20px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 60%, #1a3a6e 100%);
+      padding: 72px 40px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -100px; left: 50%;
+      transform: translateX(-50%);
+      width: 700px; height: 400px;
+      background: radial-gradient(ellipse, rgba(0,229,195,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      background: rgba(0,229,195,0.12);
+      border: 1px solid rgba(0,229,195,0.3);
+      color: var(--mint);
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      padding: 5px 14px;
+      border-radius: 20px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(32px, 5vw, 56px);
+      color: white;
+      line-height: 1.1;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+    .hero h1 em { color: var(--mint); font-style: italic; }
+    .hero p {
+      color: rgba(255,255,255,0.65);
+      font-size: 17px;
+      max-width: 520px;
+      margin: 0 auto 32px;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 24px;
+      color: var(--mint);
+      font-weight: 700;
+    }
+    .stat-label { font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* ── MAIN ── */
+    .main { max-width: 1100px; margin: 0 auto; padding: 48px 40px 80px; }
+
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 30px;
+      box-shadow: 0 2px 12px rgba(15,31,61,0.06);
+    }
+    .card-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: 20px;
+      color: var(--navy);
+      margin-bottom: 6px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .card-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+
+    /* ── TEXTAREA ── */
+    textarea {
+      width: 100%;
+      min-height: 260px;
+      background: #f8faff;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      resize: vertical;
+      transition: border-color 0.2s;
+      line-height: 1.7;
+    }
+    textarea:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,107,255,0.1); }
+    textarea::placeholder { color: #b0bec5; }
+
+    .char-count { font-size: 11px; color: var(--muted); font-family: 'Space Mono', monospace; margin-top: 6px; text-align: right; }
+
+    /* ── ANALYSE BTN ── */
+    .analyse-wrap { margin-top: 16px; display: flex; gap: 10px; }
+    #analyseBtn { flex: 1; padding: 12px 24px; font-size: 15px; font-weight: 600; }
+
+    /* ── LOADER ── */
+    .loader { display: none; align-items: center; gap: 10px; padding: 16px; background: rgba(26,107,255,0.06); border-radius: 10px; margin-top: 12px; }
+    .loader.active { display: flex; }
+    .spinner { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loader-text { font-size: 14px; color: var(--muted); }
+
+    /* ── AUTH CARD ── */
+    .auth-card {
+      background: linear-gradient(135deg, var(--navy), var(--navy2));
+      border-radius: 16px;
+      padding: 28px 30px;
+      color: white;
+    }
+    .auth-card h3 {
+      font-family: 'Instrument Serif', serif;
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+    .auth-card p { font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 20px; line-height: 1.6; }
+    .feature-list { list-style: none; margin-bottom: 20px; }
+    .feature-list li { font-size: 13px; color: rgba(255,255,255,0.8); padding: 5px 0; display: flex; align-items: center; gap: 8px; }
+    .feature-list li::before { content: '✓'; color: var(--mint); font-weight: 700; }
+
+    .btn-google {
+      width: 100%;
+      background: white;
+      color: #1f2937;
+      border: none;
+      padding: 11px 20px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      transition: all 0.18s;
+    }
+    .btn-google:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.2); transform: translateY(-1px); }
+
+    /* ── RESULTS SECTION ── */
+    #results { display: none; }
+    #results.show { display: block; animation: fadeUp 0.4s ease; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+    .results-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+    }
+    .results-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: 26px;
+      color: var(--navy);
+    }
+    .results-meta { display: flex; gap: 10px; flex-wrap: wrap; }
+    .badge {
+      font-size: 11px;
+      font-family: 'Space Mono', monospace;
+      padding: 4px 10px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-green { background: rgba(16,185,129,0.12); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
+    .badge-blue  { background: rgba(26,107,255,0.1); color: var(--blue); border: 1px solid rgba(26,107,255,0.25); }
+    .badge-amber { background: rgba(245,158,11,0.12); color: var(--amber); border: 1px solid rgba(245,158,11,0.3); }
+
+    .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+    .result-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 24px;
+      box-shadow: 0 1px 6px rgba(15,31,61,0.05);
+    }
+    .result-card.full { grid-column: 1 / -1; }
+
+    .rc-title {
+      font-size: 12px;
+      font-family: 'Space Mono', monospace;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    .summary-text { font-size: 15px; line-height: 1.75; color: #334155; }
+
+    /* ── ACTION ITEMS TABLE ── */
+    .action-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .action-table th { background: #f1f5f9; color: var(--navy); font-weight: 600; padding: 10px 12px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid var(--border); }
+    .action-table td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+    .action-table tr:last-child td { border-bottom: none; }
+    .action-table tr:hover td { background: #f8faff; }
+
+    .priority-pill {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .p-high   { background: rgba(239,68,68,0.12); color: var(--red); }
+    .p-medium { background: rgba(245,158,11,0.12); color: var(--amber); }
+    .p-low    { background: rgba(16,185,129,0.12); color: var(--green); }
+
+    /* ── DECISIONS ── */
+    .decision-list { list-style: none; }
+    .decision-list li {
+      padding: 10px 14px;
+      background: #f8faff;
+      border-left: 3px solid var(--blue);
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 8px;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty { text-align: center; padding: 24px; color: var(--muted); font-size: 14px; }
+    .empty-icon { font-size: 28px; margin-bottom: 8px; }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--navy);
+      color: white;
+      padding: 14px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      z-index: 1000;
+      max-width: 320px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.success { border-left: 4px solid var(--green); }
+    #toast.error   { border-left: 4px solid var(--red); }
+    #toast.info    { border-left: 4px solid var(--blue); }
+
+    /* ── HISTORY ── */
+    .history-item {
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.18s;
+      background: #fafcff;
+    }
+    .history-item:hover { border-color: var(--blue); background: #f0f4ff; }
+    .history-item-title { font-size: 13px; font-weight: 500; color: var(--navy); margin-bottom: 4px; }
+    .history-item-meta { font-size: 11px; font-family: 'Space Mono', monospace; color: var(--muted); }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:768px) {
+      .grid, .results-grid { grid-template-columns: 1fr; }
+      .hero { padding: 48px 20px 40px; }
+      .main { padding: 32px 20px 60px; }
+      header { padding: 0 20px; }
+      .result-card.full { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <a href="/" class="logo" aria-label="Smart Meeting Assistant home">
+    <div class="logo-icon" aria-hidden="true">📋</div>
+    <span class="logo-text">Meeting<span>AI</span></span>
+  </a>
+  <div class="header-right">
+    {% if user_email %}
+      <span class="user-badge" aria-label="Logged in as {{ user_email }}">{{ user_email }}</span>
+      <button class="btn btn-ghost" onclick="logout()" aria-label="Log out">Log out</button>
+    {% else %}
+      <button class="btn btn-ghost" onclick="connectGoogle()" aria-label="Connect Google account">Connect Google</button>
+    {% endif %}
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" role="banner">
+  <div class="hero-tag" aria-label="Product tag">✦ AI-Powered</div>
+  <h1>Turn meeting chaos into<br><em>clear action</em></h1>
+  <p>Paste your meeting notes. Get instant summaries, action items, and auto-scheduled calendar events.</p>
+  <div class="hero-stats" role="list" aria-label="Key features">
+    <div class="stat" role="listitem"><div class="stat-num">⚡</div><div class="stat-label">AI Analysis</div></div>
+    <div class="stat" role="listitem"><div class="stat-num">📅</div><div class="stat-label">Auto Calendar</div></div>
+    <div class="stat" role="listitem"><div class="stat-num">📧</div><div class="stat-label">Email Summary</div></div>
+    <div class="stat" role="listitem"><div class="stat-num">☁️</div><div class="stat-label">Cloud Saved</div></div>
+  </div>
+</section>
+
+<!-- MAIN -->
+<main class="main" id="main-content">
+
+  <div class="grid">
+
+    <!-- INPUT CARD -->
+    <div class="card">
+      <h2 class="card-title"><span aria-hidden="true">📝</span> Paste Meeting Notes</h2>
+      <p class="card-sub">Paste raw notes, transcript, or bullet points from any meeting.</p>
+
+      <label for="meetingNotes" class="sr-only">Meeting notes input</label>
+      <textarea
+        id="meetingNotes"
+        placeholder="Example:
+Team sync - April 28, 2026
+Attendees: Deepthi, Rahul, Priya
+
+- Q2 roadmap needs to be finalised by May 10
+- Deepthi to review backend API docs before Friday
+- Rahul will prepare the investor deck by May 5
+- Decided to go with Firebase over AWS for now
+- Next meeting: May 3rd at 3 PM
+- Priya to set up staging environment this week"
+        aria-label="Meeting notes"
+        aria-required="true"
+        oninput="updateCharCount(this)"
+      ></textarea>
+      <div class="char-count" id="charCount" aria-live="polite">0 / 10,000 characters</div>
+
+      <div class="analyse-wrap">
+        <button class="btn btn-primary" id="analyseBtn" onclick="analyseMeeting()" aria-label="Analyse meeting notes">
+          <span>✨</span> Analyse Meeting
+        </button>
+        <button class="btn btn-outline" onclick="clearAll()" aria-label="Clear all input">Clear</button>
+      </div>
+
+      <div class="loader" id="loader" role="status" aria-live="polite">
+        <div class="spinner" aria-hidden="true"></div>
+        <span class="loader-text">Analysing with Gemini AI…</span>
+      </div>
+    </div>
+
+    <!-- AUTH / GOOGLE CARD -->
+    <div>
+      {% if user_email %}
+      <div class="card" style="border-left: 4px solid var(--green);">
+        <h3 class="card-title"><span aria-hidden="true">✅</span> Google Connected</h3>
+        <p class="card-sub" style="margin-bottom:12px;">Logged in as <strong>{{ user_email }}</strong>. Calendar events and summary emails will be sent automatically after each analysis.</p>
+        <ul class="feature-list" style="margin-bottom:0;">
+          <li>Action items → Google Calendar events</li>
+          <li>Summary email sent to your inbox</li>
+          <li>All meetings saved to cloud</li>
+        </ul>
+      </div>
+      {% else %}
+      <div class="auth-card">
+        <h3>🔗 Connect Google Account</h3>
+        <p>Sign in to automatically create calendar events for every action item and receive a formatted email summary.</p>
+        <ul class="feature-list">
+          <li>Auto-create Calendar reminders</li>
+          <li>Receive email summaries</li>
+          <li>Save meeting history to cloud</li>
+          <li>Works with Gmail & Google Calendar</li>
+        </ul>
+        <button class="btn-google" onclick="connectGoogle()" aria-label="Sign in with Google">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Sign in with Google
+        </button>
+      </div>
+      {% endif %}
+
+      <!-- HISTORY CARD -->
+      <div class="card" style="margin-top:20px;">
+        <h3 class="card-title" style="font-size:17px;"><span aria-hidden="true">🕐</span> Recent Meetings</h3>
+        <div id="historyList">
+          <div class="empty"><div class="empty-icon">📭</div>No meetings yet. Analyse one above!</div>
+        </div>
+        <button class="btn btn-outline" onclick="loadHistory()" style="width:100%;margin-top:12px;" aria-label="Load meeting history">Load History</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RESULTS -->
+  <section id="results" aria-live="polite" aria-label="Meeting analysis results">
+    <div class="results-header">
+      <h2 class="results-title">📊 Analysis Results</h2>
+      <div class="results-meta" id="resultsBadges"></div>
+    </div>
+
+    <div class="results-grid">
+
+      <!-- SUMMARY -->
+      <div class="result-card full">
+        <div class="rc-title"><span aria-hidden="true">💡</span> Meeting Summary</div>
+        <p class="summary-text" id="summaryText"></p>
+      </div>
+
+      <!-- ACTION ITEMS -->
+      <div class="result-card full">
+        <div class="rc-title"><span aria-hidden="true">✅</span> Action Items</div>
+        <div id="actionItemsWrap" style="overflow-x:auto;">
+          <table class="action-table" aria-label="Action items table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Task</th>
+                <th scope="col">Owner</th>
+                <th scope="col">Due Date</th>
+                <th scope="col">Priority</th>
+              </tr>
+            </thead>
+            <tbody id="actionItemsBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- DECISIONS -->
+      <div class="result-card">
+        <div class="rc-title"><span aria-hidden="true">🎯</span> Decisions Made</div>
+        <ul class="decision-list" id="decisionsList"></ul>
+      </div>
+
+      <!-- DEADLINES -->
+      <div class="result-card">
+        <div class="rc-title"><span aria-hidden="true">⏰</span> Deadlines</div>
+        <ul class="decision-list" id="deadlinesList"></ul>
+      </div>
+
+      <!-- ATTENDEES + NEXT MEETING -->
+      <div class="result-card">
+        <div class="rc-title"><span aria-hidden="true">👥</span> Attendees</div>
+        <div id="attendeesList" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;"></div>
+      </div>
+
+      <div class="result-card">
+        <div class="rc-title"><span aria-hidden="true">📅</span> Next Meeting</div>
+        <div id="nextMeetingDisplay" style="font-size:15px;color:#334155;padding:4px 0;"></div>
+      </div>
+
+      <!-- EXPORT ROW -->
+      <div class="result-card full" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:16px 24px;">
+        <div style="font-size:13px;color:var(--muted);">Meeting saved · <span id="exportMeetingId" style="font-family:'Space Mono',monospace;"></span></div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-outline" id="exportBtn" onclick="exportMeeting()" aria-label="Export meeting as text file" style="font-size:13px;padding:8px 16px;">
+            ⬇ Export .txt
+          </button>
+          <button class="btn btn-outline" onclick="clearAll()" aria-label="Start a new meeting" style="font-size:13px;padding:8px 16px;">
+            + New Meeting
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- TOAST -->
+<div id="toast" role="alert" aria-live="assertive"></div>
+
+<!-- CALLBACK REDIRECT PLACEHOLDER -->
+<div id="authStatus"></div>
+
+<script>
+  // ── Utilities ───────────────────────────────────────────────────────────────
+  function showToast(message, type = 'info') {
+    const t = document.getElementById('toast');
+    const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+    t.innerHTML = `<span>${icons[type] || 'ℹ️'}</span><span>${message}</span>`;
+    t.className = `show ${type}`;
+    setTimeout(() => { t.className = ''; }, 4000);
+  }
+
+  function updateCharCount(el) {
+    const count = el.value.length;
+    document.getElementById('charCount').textContent = `${count.toLocaleString()} / 10,000 characters`;
+  }
+
+  function clearAll() {
+    document.getElementById('meetingNotes').value = '';
+    document.getElementById('charCount').textContent = '0 / 10,000 characters';
+    document.getElementById('results').classList.remove('show');
+  }
+
+  function setLoading(active) {
+    const btn = document.getElementById('analyseBtn');
+    const loader = document.getElementById('loader');
+    btn.disabled = active;
+    btn.innerHTML = active ? '<span>⏳</span> Analysing…' : '<span>✨</span> Analyse Meeting';
+    loader.classList.toggle('active', active);
+  }
+
+  // ── Analyse Meeting ─────────────────────────────────────────────────────────
+  async function analyseMeeting() {
+    const notes = document.getElementById('meetingNotes').value.trim();
+    if (!notes || notes.length < 20) {
+      showToast('Please enter at least 20 characters of meeting notes.', 'error');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch('/analyse', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notes })
+      });
+      const data = await res.json();
+
+      if (!res.ok || data.error) {
+        showToast(data.error || 'Analysis failed. Please try again.', 'error');
+        return;
+      }
+
+      renderResults(data);
+
+      let msg = `Analysis complete! ${data.analysis.action_items?.length || 0} action items found.`;
+      if (data.calendar_events_created > 0) msg += ` 📅 ${data.calendar_events_created} calendar events created.`;
+      if (data.email_sent) msg += ' 📧 Summary email sent!';
+      showToast(msg, 'success');
+
+      loadHistory();
+
+    } catch (err) {
+      console.error(err);
+      showToast('Network error. Is the server running?', 'error');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // ── Render Results ──────────────────────────────────────────────────────────
+  function renderResults(data) {
+    const { analysis, calendar_events_created, email_sent, meeting_id } = data;
+
+    // Summary
+    document.getElementById('summaryText').textContent = analysis.summary || 'No summary available.';
+
+    // Badges
+    const badgesEl = document.getElementById('resultsBadges');
+    badgesEl.innerHTML = '';
+    if (calendar_events_created > 0) badgesEl.innerHTML += `<span class="badge badge-green">📅 ${calendar_events_created} events created</span>`;
+    if (email_sent) badgesEl.innerHTML += `<span class="badge badge-blue">📧 Email sent</span>`;
+    if (meeting_id) badgesEl.innerHTML += `<span class="badge badge-amber">ID: ${meeting_id.slice(0,8)}</span>`;
+
+    // Action Items
+    const tbody = document.getElementById('actionItemsBody');
+    tbody.innerHTML = '';
+    const items = analysis.action_items || [];
+    if (items.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5"><div class="empty"><div class="empty-icon">✅</div>No action items detected</div></td></tr>';
+    } else {
+      items.forEach((item, i) => {
+        const pClass = item.priority === 'high' ? 'p-high' : item.priority === 'low' ? 'p-low' : 'p-medium';
+        tbody.innerHTML += `
+          <tr>
+            <td style="color:var(--muted);font-size:12px;width:30px;">${i + 1}</td>
+            <td style="font-weight:500;">${escapeHtml(item.task || '')}</td>
+            <td style="color:var(--muted);">${escapeHtml(item.owner || 'Team')}</td>
+            <td style="font-family:'Space Mono',monospace;font-size:12px;">${escapeHtml(item.due_date || 'TBD')}</td>
+            <td><span class="priority-pill ${pClass}">${escapeHtml(item.priority || 'medium')}</span></td>
+          </tr>`;
+      });
+    }
+
+    // Decisions
+    const decList = document.getElementById('decisionsList');
+    const decisions = analysis.decisions || [];
+    decList.innerHTML = decisions.length
+      ? decisions.map(d => `<li>${escapeHtml(d)}</li>`).join('')
+      : '<li style="color:var(--muted);">No decisions recorded.</li>';
+
+    // Deadlines
+    const deadList = document.getElementById('deadlinesList');
+    const deadlines = analysis.deadlines || [];
+    deadList.innerHTML = deadlines.length
+      ? deadlines.map(d => `<li><strong>${escapeHtml(d.item || '')}</strong> — ${escapeHtml(d.owner || 'Team')} by ${escapeHtml(d.date || 'TBD')}</li>`).join('')
+      : '<li style="color:var(--muted);">No specific deadlines mentioned.</li>';
+
+    // Attendees
+    const attendeesWrap = document.getElementById('attendeesList');
+    const attendees = analysis.attendees || [];
+    attendeesWrap.innerHTML = attendees.length
+      ? attendees.map(a => `<span style="background:#f0f4ff;border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:500;color:var(--navy);">${escapeHtml(a)}</span>`).join('')
+      : '<span style="color:var(--muted);font-size:13px;">No attendees listed</span>';
+
+    // Next meeting
+    const nextEl = document.getElementById('nextMeetingDisplay');
+    if (analysis.next_meeting) {
+      nextEl.innerHTML = `<span style="font-weight:600;color:var(--blue);">📌 ${escapeHtml(analysis.next_meeting)}</span>`;
+    } else {
+      nextEl.innerHTML = `<span style="color:var(--muted);font-size:13px;">Not specified in notes</span>`;
+    }
+
+    // Export button setup
+    document.getElementById('exportMeetingId').textContent = meeting_id ? meeting_id.slice(0, 8) : '';
+    if (document.getElementById('exportBtn')) {
+      document.getElementById('exportBtn').dataset.meetingId = meeting_id || '';
+    }
+
+    // Show results
+    document.getElementById('results').classList.add('show');
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // ── Export Meeting ──────────────────────────────────────────────────────────
+  function exportMeeting() {
+    const btn = document.getElementById('exportBtn');
+    const meetingId = btn ? btn.dataset.meetingId : '';
+    if (!meetingId) { showToast('No meeting to export yet.', 'info'); return; }
+    window.open(`/export/${meetingId}`, '_blank');
+  }
+
+  // ── Load History ────────────────────────────────────────────────────────────
+  async function loadHistory() {
+    try {
+      const res = await fetch('/history');
+      const data = await res.json();
+      const container = document.getElementById('historyList');
+
+      if (!data.meetings || data.meetings.length === 0) {
+        container.innerHTML = '<div class="empty"><div class="empty-icon">📭</div>No meetings saved yet.</div>';
+        return;
+      }
+
+      container.innerHTML = data.meetings.map(m => `
+        <div class="history-item" role="button" tabindex="0" aria-label="Meeting from ${m.created_at}">
+          <div class="history-item-title">${escapeHtml(m.summary?.slice(0, 80) || 'Meeting summary')}…</div>
+          <div class="history-item-meta">${m.action_count} actions · ID: ${m.meeting_id?.slice(0,8) || ''}</div>
+        </div>
+      `).join('');
+    } catch (e) {
+      console.error('History fetch failed:', e);
+    }
+  }
+
+  // ── Google Auth ─────────────────────────────────────────────────────────────
+  async function connectGoogle() {
+    try {
+      const res = await fetch('/auth/google');
+      const data = await res.json();
+      if (data.auth_url) {
+        window.location.href = data.auth_url;
+      } else {
+        showToast(data.error || 'OAuth not configured.', 'error');
+      }
+    } catch (e) {
+      showToast('Could not initiate Google login.', 'error');
+    }
+  }
+
+  async function logout() {
+    await fetch('/auth/logout');
+    window.location.reload();
+  }
+
+  // ── Security: Escape HTML ───────────────────────────────────────────────────
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  // ── Init ────────────────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    loadHistory();
+    // Allow Enter+Space on history items for keyboard accessibility
+    document.addEventListener('keydown', e => {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('history-item')) {
+        e.target.click();
+      }
+    });
+  });
+</script>
+
+<!-- Screen reader only utility class -->
+<style>.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}</style>
+
+</body>
+</html>

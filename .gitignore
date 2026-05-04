@@ -1,0 +1,44 @@
+# Smart Meeting Assistant - .gitignore
+
+# Environment & Secrets — NEVER COMMIT THESE
+.env
+firebase-credentials.json
+client_secrets.json
+*.json
+!package.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+.Python
+env/
+venv/
+ENV/
+.venv/
+pip-log.txt
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Distribution
+dist/
+build/

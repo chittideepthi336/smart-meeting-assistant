@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connected — Smart Meeting Assistant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:   #0f1f3d;
+      --navy2:  #162b52;
+      --blue:   #1a6bff;
+      --mint:   #00e5c3;
+      --green:  #10b981;
+      --bg:     #f0f4ff;
+      --surface:#ffffff;
+      --border: #dde6f5;
+      --text:   #0f1f3d;
+      --muted:  #64748b;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    /* Background radial glow */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        radial-gradient(ellipse 600px 400px at 50% 40%, rgba(0,229,195,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 400px 300px at 80% 80%, rgba(26,107,255,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 48px 52px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 4px 40px rgba(15,31,61,0.10);
+      animation: slideUp 0.5s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Animated check circle */
+    .check-wrap {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 28px;
+      position: relative;
+    }
+
+    .check-bg {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(0,229,195,0.15), rgba(16,185,129,0.15));
+      border: 2px solid rgba(0,229,195,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) 0.2s both;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .check-icon {
+      font-size: 36px;
+      animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) 0.35s both;
+    }
+
+    /* Ping ring animation */
+    .check-wrap::after {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 2px solid rgba(0,229,195,0.25);
+      animation: ping 1.5s ease-out 0.5s infinite;
+    }
+
+    @keyframes ping {
+      0%   { transform: scale(1); opacity: 0.6; }
+      100% { transform: scale(1.4); opacity: 0; }
+    }
+
+    h1 {
+      font-family: 'Instrument Serif', serif;
+      font-size: 28px;
+      color: var(--navy);
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+
+    h1 em { color: var(--mint); font-style: italic; }
+
+    .subtitle {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    /* Permission pills */
+    .perms {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 32px;
+      text-align: left;
+    }
+
+    .perm-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #f8faff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 14px;
+      animation: fadeIn 0.4s ease both;
+    }
+
+    .perm-row:nth-child(1) { animation-delay: 0.4s; }
+    .perm-row:nth-child(2) { animation-delay: 0.5s; }
+    .perm-row:nth-child(3) { animation-delay: 0.6s; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(-8px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .perm-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .perm-icon.calendar { background: rgba(26,107,255,0.1); }
+    .perm-icon.email    { background: rgba(0,229,195,0.1); }
+    .perm-icon.profile  { background: rgba(245,158,11,0.1); }
+
+    .perm-text { flex: 1; }
+    .perm-name { font-size: 13px; font-weight: 500; color: var(--text); }
+    .perm-desc { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+    .perm-check {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: rgba(16,185,129,0.15);
+      border: 1.5px solid var(--green);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--green);
+      font-size: 10px;
+      flex-shrink: 0;
+    }
+
+    /* User email display */
+    .user-email-box {
+      background: rgba(0,229,195,0.08);
+      border: 1px solid rgba(0,229,195,0.25);
+      border-radius: 10px;
+      padding: 10px 16px;
+      margin-bottom: 28px;
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .user-email-box span:first-child { color: var(--mint); }
+
+    /* Return button */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--blue), #0050d0);
+      color: white;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 13px 24px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s;
+      box-shadow: 0 3px 16px rgba(26,107,255,0.3);
+      animation: fadeIn 0.4s ease 0.7s both;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 22px rgba(26,107,255,0.4);
+    }
+
+    .btn-primary:active { transform: translateY(0); }
+
+    /* Auto-redirect hint */
+    .redirect-hint {
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--muted);
+      animation: fadeIn 0.4s ease 0.8s both;
+    }
+
+    .countdown {
+      font-family: 'Space Mono', monospace;
+      color: var(--blue);
+      font-weight: 700;
+    }
+
+    /* Error state */
+    .card.error .check-bg {
+      background: rgba(239,68,68,0.1);
+      border-color: rgba(239,68,68,0.3);
+    }
+
+    .error-msg {
+      background: rgba(239,68,68,0.06);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #b91c1c;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    /* Logo link top-left */
+    .back-link {
+      position: fixed;
+      top: 20px;
+      left: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--navy);
+      font-size: 13px;
+      font-weight: 500;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+      z-index: 10;
+    }
+
+    .back-link:hover { opacity: 1; }
+
+    .back-logo {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--blue), var(--mint));
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <a href="/" class="back-link" aria-label="Back to Smart Meeting Assistant">
+    <div class="back-logo">📋</div>
+    Smart Meeting Assistant
+  </a>
+
+  <div class="card" id="card" role="main">
+
+    <!-- Success state (default) -->
+    <div id="successState">
+      <div class="check-wrap" aria-hidden="true">
+        <div class="check-bg">
+          <span class="check-icon">✓</span>
+        </div>
+      </div>
+
+      <h1>Google <em>Connected</em></h1>
+      <p class="subtitle">
+        Your account is linked. Smart Meeting Assistant can now create calendar events and send email summaries automatically.
+      </p>
+
+      <!-- User email (populated by JS if available) -->
+      <div class="user-email-box" id="emailBox" style="display:none;" aria-live="polite">
+        <span>◉</span>
+        <span id="userEmailDisplay"></span>
+      </div>
+
+      <!-- Granted permissions -->
+      <div class="perms" role="list" aria-label="Granted permissions">
+        <div class="perm-row" role="listitem">
+          <div class="perm-icon calendar" aria-hidden="true">📅</div>
+          <div class="perm-text">
+            <div class="perm-name">Google Calendar</div>
+            <div class="perm-desc">Create action-item events with reminders</div>
+          </div>
+          <div class="perm-check" aria-label="Granted">✓</div>
+        </div>
+        <div class="perm-row" role="listitem">
+          <div class="perm-icon email" aria-hidden="true">📧</div>
+          <div class="perm-text">
+            <div class="perm-name">Gmail</div>
+            <div class="perm-desc">Send formatted meeting summary emails</div>
+          </div>
+          <div class="perm-check" aria-label="Granted">✓</div>
+        </div>
+        <div class="perm-row" role="listitem">
+          <div class="perm-icon profile" aria-hidden="true">👤</div>
+          <div class="perm-text">
+            <div class="perm-name">Profile (email only)</div>
+            <div class="perm-desc">Identify your account — no password stored</div>
+          </div>
+          <div class="perm-check" aria-label="Granted">✓</div>
+        </div>
+      </div>
+
+      <a href="/" class="btn-primary" id="returnBtn" aria-label="Return to app and start analysing">
+        <span>✨</span> Start Analysing Meetings
+      </a>
+
+      <p class="redirect-hint">
+        Redirecting automatically in <span class="countdown" id="countdown">5</span>s
+      </p>
+    </div>
+
+    <!-- Error state (shown if ?error param present) -->
+    <div id="errorState" style="display:none;">
+      <div class="check-wrap" aria-hidden="true">
+        <div class="check-bg">
+          <span class="check-icon">✕</span>
+        </div>
+      </div>
+
+      <h1 style="color:#b91c1c;">Auth <em style="color:#ef4444;">Failed</em></h1>
+      <p class="subtitle">Something went wrong during Google authentication.</p>
+
+      <div class="error-msg" id="errorMsg" role="alert" aria-live="assertive">
+        An unexpected error occurred. Please try again.
+      </div>
+
+      <a href="/" class="btn-primary" style="background: linear-gradient(135deg,#ef4444,#b91c1c); box-shadow: 0 3px 16px rgba(239,68,68,0.3);">
+        <span>↩</span> Return to App
+      </a>
+    </div>
+
+  </div>
+
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+
+      // ── Error handling ───────────────────────────────────────────────────────
+      const errorParam = params.get('error');
+      if (errorParam) {
+        document.getElementById('successState').style.display = 'none';
+        document.getElementById('errorState').style.display  = 'block';
+        document.getElementById('card').classList.add('error');
+
+        const errorMessages = {
+          access_denied:         'You denied access. No permissions were granted.',
+          invalid_request:       'The authentication request was invalid. Please try again.',
+          server_error:          'Google reported a server error. Please retry in a moment.',
+          temporarily_unavailable: 'Google authentication is temporarily unavailable.',
+        };
+
+        const msg = errorMessages[errorParam] || `OAuth error: ${errorParam}`;
+        document.getElementById('errorMsg').textContent = msg;
+        return; // stop — no countdown for error state
+      }
+
+      // ── Success: show email if passed via query param ─────────────────────────
+      // Flask could redirect to /auth/callback?email=user@x.com, or we read from
+      // a data attribute injected by the template engine. Both approaches handled.
+      const emailParam  = params.get('email');
+      const emailEl     = document.getElementById('userEmailDisplay');
+      const emailBox    = document.getElementById('emailBox');
+
+      if (emailParam) {
+        // Basic sanity check before displaying
+        if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailParam)) {
+          emailEl.textContent = emailParam;
+          emailBox.style.display = 'flex';
+        }
+      }
+
+      // ── Countdown + auto-redirect ─────────────────────────────────────────────
+      let seconds = 5;
+      const countdownEl = document.getElementById('countdown');
+
+      const interval = setInterval(() => {
+        seconds -= 1;
+        countdownEl.textContent = seconds;
+        if (seconds <= 0) {
+          clearInterval(interval);
+          window.location.href = '/';
+        }
+      }, 1000);
+
+      // Clicking the button cancels the countdown (avoids double-redirect)
+      document.getElementById('returnBtn').addEventListener('click', () => {
+        clearInterval(interval);
+      });
+    })();
+  </script>
+
+</body>
+</html>
