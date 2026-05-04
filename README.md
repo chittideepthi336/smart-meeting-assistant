@@ -61,7 +61,7 @@ Paste Meeting Notes
 
 |Service|How It's Used|
 |-|-|
-|**Gemini 1.5 Flash**|Core AI — extracts structure from raw meeting notes|
+|**Gemini 2.0 Flash**|Core AI — extracts structure from raw meeting notes|
 |**Firebase Firestore**|Stores every meeting session with full analysis data|
 |**Google Calendar API**|Creates calendar events for every action item with due dates and reminders|
 |**Gmail API**|Sends a beautifully formatted HTML meeting summary to the user|
@@ -81,7 +81,7 @@ Paste Meeting Notes
 ### 1\. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR\_USERNAME/smart-meeting-assistant.git
+git clone https://github.com/chittideepthi336/smart-meeting-assistant.git
 cd smart-meeting-assistant
 ```
 
@@ -161,7 +161,7 @@ Tests cover:
 
 1. User submits meeting notes via POST `/analyse`
 2. Input is sanitized (max 10,000 chars, HTML stripped)
-3. A structured prompt is sent to Gemini 1.5 Flash
+3. A structured prompt is sent to Gemini 2.0 Flash
 4. Response is parsed — JSON extracted from markdown fences if needed
 5. Fallback structure returned if parsing fails
 
