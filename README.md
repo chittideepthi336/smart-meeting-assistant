@@ -125,7 +125,7 @@ smart-meeting-assistant/
 │   └── callback.html       # OAuth callback page
 ├── tests/
 │   ├── \_\_init\_\_.py
-│   └── test\_app.py         # 20+ unit tests
+│   └── test\_app.py         # 45 unit tests
 ├── requirements.txt        # Pinned dependencies
 ├── Dockerfile              # Container configuration
 ├── .env.example            # Environment variable template
