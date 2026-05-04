@@ -744,7 +744,7 @@ def health():
     return jsonify({
         "status": "healthy",
         "gemini": model is not None,
-        "gemini_model": "" if model else None,
+        "gemini_model": "gemini-2.0-flash" if model else None,
         "firestore": db is not None,
         "timestamp": datetime.now().isoformat(),
     })
